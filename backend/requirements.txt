@@ -1,0 +1,14 @@
+asgiref==3.2.10
+Django==2.2.16
+django-filter
+djangorestframework==3.12.4
+djangorestframework-simplejwt==4.7.2
+djoser==2.1.0
+gunicorn==20.0.4
+psycopg2-binary
+PyJWT==2.1.0
+pytz==2020.1
+sqlparse==0.3.1 
+Pillow==9.4.0
+python-dotenv
+django-cors-headers
