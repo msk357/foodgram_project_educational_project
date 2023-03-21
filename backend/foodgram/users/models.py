@@ -49,6 +49,7 @@ class CustomUser(AbstractUser):
     email = models.EmailField(
         max_length=Limits.MAX_LEN_EMAIL_FIELD.value,
         help_text="Введите ваш email",
+        unique=True,
         validators=[validate_email],
     )
     password = models.CharField(
@@ -58,6 +59,12 @@ class CustomUser(AbstractUser):
         verbose_name="Статус активирован",
         default=True,
     )
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+
+    def get_username(self):
+        return self.email
 
     class Meta:
         ordering = ("username",)

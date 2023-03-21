@@ -16,14 +16,14 @@ Models:
     Cart:
         Рецепты в корзине покупок.
 """
+from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
+
 from users.models import CustomUser
+from core.enums import Limits
 from core.validators import (hex_validator_code,
                              validate_field_name,
                              validate_field_slug)
-from core.enums import Limits
-
-from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Tag(models.Model):
@@ -220,7 +220,7 @@ class AmountIngredient(models.Model):
         related_name="recipe",
         on_delete=models.CASCADE,
     )
-    amount = models.IntegerField(
+    amount = models.PositiveSmallIntegerField(
         verbose_name="Количество",
         default=0,
         validators=[MinValueValidator(1), MaxValueValidator(1000)],

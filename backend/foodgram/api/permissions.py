@@ -47,21 +47,3 @@ class AdminOrReadOnly(BanPermission):
             and request.user.is_active
             and request.user.is_staff
         )
-
-
-class OwnerUserOrReadOnly(BanPermission):
-    """
-    Разрешение на создание и изменение только для админа и пользователя.
-    Остальным только чтение объекта.
-    """
-
-    def has_object_permission(
-        self, request: WSGIRequest, view: APIRootView, obj: Model
-    ) -> bool:
-        return (
-            request.method in SAFE_METHODS
-            or request.user.is_authenticated
-            and request.user.is_active
-            and request.user == obj.author
-            or request.user.is_staff
-        )

@@ -3,18 +3,11 @@ from enum import Enum, IntEnum
 
 
 class Tuples(tuple, Enum):
-    # размер изображения
-    RECIPE_IMAGE = 500, 300
     # значение для empty_value_display
     EMPTY_VALUE_DISPLAY = "Нет значения"
     # поиск по параметрам
     SYMBOL_TRUE_SEARCH = "1", "true"
     SYMBOL_FALSE_SEARCH = "0", "false"
-    # типы запросов
-    ADD_METHODS = "GET", "POST"
-    DEL_METHODS = ("DELETE",)
-    ACTION_METHODS = "GET", "POST", "DELETE"
-    UPDATE_METHODS = "PUT", "PATCH"
 
 
 class Limits(IntEnum):
@@ -31,8 +24,6 @@ class Limits(IntEnum):
 
 
 class UrlRequests(str, Enum):
-    # Параметр для поиска ингридиентов
-    SEARCH_ING_NAME = "name"
     # Параметр для поиска в списке "избранное"
     FAVORIT = "is_favorited"
     # Параметр для поиска в списке "покупки"

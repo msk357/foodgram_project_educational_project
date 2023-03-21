@@ -1,12 +1,15 @@
 from core.services import recipe_amount_ingredients_set, Base64ImageField
+from core.validators import ingredients_validator, tags_validator
 from users.models import CustomUser
 from recipes.models import Ingredient, Recipe, Tag
 
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
+from django.core.exceptions import ValidationError
 from django.db.models import F, QuerySet
 
 
 class CropRecipeSerializer(ModelSerializer):
+
     """Сериализатор для модели Recipe.
     Убраны поля: tags, text, ingredients.
     """
@@ -119,7 +122,6 @@ class IngredientSerializer(ModelSerializer):
 
 class RecipeSerializer(ModelSerializer):
     """Сериализатор для рецептов."""
-
     tags = TagSerializer(many=True, read_only=True)
     author = UserSerializer(read_only=True)
     ingredients = SerializerMethodField()
@@ -168,10 +170,29 @@ class RecipeSerializer(ModelSerializer):
         Метод проверяет авторизацию и наличие объекта.
         Если запись найдена, возвращает True.
         """
+        if not isinstance(recipe, Recipe):
+            return False
         user = self.context.get("view").request.user
         if user.is_anonymous:
             return False
         return user.carts.filter(recipe=recipe).exists()
+
+    def validate(self, data: dict) -> dict:
+        """Проверка данных при создании рецепта."""
+        tags_obj: list = self.initial_data.get("tags")
+        ingredients: list = self.initial_data.get("ingredients")
+
+        if not tags_obj or not ingredients:
+            raise ValidationError("Не введены данные")
+
+        tags_validator(tags_obj, Tag)
+        ingredients = ingredients_validator(ingredients, Ingredient)
+        data.update({
+            "tags": tags_obj,
+            "ingredients": ingredients,
+            "author": self.context.get("request").user
+        })
+        return data
 
     def create(self, validated_data: dict) -> Recipe:
         """Создание нового рецепта."""

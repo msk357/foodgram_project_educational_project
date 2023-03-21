@@ -8,7 +8,7 @@
 """
 import csv
 from django.core.management.base import BaseCommand
-from django.db import connection
+from django.db import IntegrityError
 
 from recipes.models import Ingredient
 
@@ -21,12 +21,18 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         csv_file = options["csv_file"]
+        obj_list = []
         with open(csv_file, "r") as f:
             reader = csv.reader(f)
             next(reader)
             for row in reader:
-                obj = Ingredient()
-                obj.name = row[0]
-                obj.measurement_unit = row[1]
-                obj.save()
-        connection.cursor().execute("COMMIT;")
+                obj = Ingredient(
+                    name = row[0],
+                    measurement_unit = row[1],
+                )
+                obj_list.append(obj)
+        try:
+            Ingredient.objects.bulk_create(obj_list)
+            self.stdout.write(self.style.SUCCESS('Данные добавлены в БД'))
+        except IntegrityError:
+            self.stderr.write(self.style.ERROR('Не получилось копировать данные в БД'))

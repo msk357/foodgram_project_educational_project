@@ -1,3 +1,6 @@
+from api.permissions import AuthorStaffOrReadOnly, AdminOrReadOnly
+from api.mixins import CreateDelViewMixin
+from api.paginations import PaginationNone
 from api.serializers import (
     TagSerializer,
     IngredientSerializer,
@@ -8,27 +11,23 @@ from api.serializers import (
 from recipes.models import Tag, Ingredient, Recipe, Favorit, Cart
 from users.models import Follow
 from users.models import CustomUser
-from api.mixins import CreateDelViewMixin
-from api.paginations import PaginationNone
 from core.enums import Tuples, UrlRequests
 
 from djoser.views import UserViewSet as DjoserUserViewSet
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.shortcuts import get_object_or_404
 from django.core.handlers.wsgi import WSGIRequest
 from django.db.models import F, Q, Sum
 from django.http.response import HttpResponse
+from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated
 from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
     HTTP_401_UNAUTHORIZED,
     HTTP_201_CREATED,
     HTTP_204_NO_CONTENT,
 )
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
-from api.permissions import AdminOrReadOnly, AuthorStaffOrReadOnly
-from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated
 
 
 class UserViewSet(DjoserUserViewSet, ModelViewSet):
@@ -101,26 +100,26 @@ class UserViewSet(DjoserUserViewSet, ModelViewSet):
         )
         serializer = UserSubscribeSerializer(pages, many=True)
         return self.get_paginated_response(serializer.data)
+    
 
-
-class TagViewSet(ReadOnlyModelViewSet):
-    """Для работы с моделью Tag.
-    Изменения доступны только администратору.
-    """
-    queryset = Tag.objects.all()
-    pagination_class = PaginationNone
-    serializer_class = TagSerializer
-    permission_classes = [AdminOrReadOnly]
-
-
-class IngredientViewSet(ReadOnlyModelViewSet):
-    """Для работы с моделью Ingredient.
-    Изменения доступны только администратору.
-    """
-    queryset = Ingredient.objects.all()
-    pagination_class = PaginationNone
-    serializer_class = IngredientSerializer
-    permission_classes = [AdminOrReadOnly]
+class TagViewSet(ReadOnlyModelViewSet): 
+    """Для работы с моделью Tag. 
+    Изменения доступны только администратору. 
+    """ 
+    queryset = Tag.objects.all() 
+    pagination_class = PaginationNone 
+    serializer_class = TagSerializer 
+    permission_classes = [AdminOrReadOnly] 
+ 
+ 
+class IngredientViewSet(ReadOnlyModelViewSet): 
+    """Для работы с моделью Ingredient. 
+    Изменения доступны только администратору. 
+    """ 
+    queryset = Ingredient.objects.all() 
+    pagination_class = PaginationNone 
+    serializer_class = IngredientSerializer 
+    permission_classes = [AdminOrReadOnly] 
 
 
 class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
@@ -193,7 +192,7 @@ class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
         filename = f"{user.username}_shopping_list.txt"
         shopping_list = [f"Ваш список покупок:\n\n{user.first_name}\n"]
         ingredients = Ingredient.objects.filter(
-            recipe__recipe__in_carts__user=user
+            recipe__recipe__in_shopping_cart__user=user
         ).values(
             'name',
             measurement=F('measurement_unit')

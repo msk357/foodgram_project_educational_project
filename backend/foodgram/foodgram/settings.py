@@ -24,9 +24,7 @@ DATE_TIME_FORMAT = "%d/%m/%Y %H:%M"
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv(
-    "SECRET_KEY", default="v&u3(*wr-2_gre4k*cy@ssiw$*pg$_zkg@^l4e=%cm-mafj#s8"
-)
+SECRET_KEY = os.getenv("SECRET_KEY", default="v&u3(*wr-2_gre4k*cy@ssiw$*pg$_zkg@^l4e=%cm-mafj#s8")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -97,9 +95,7 @@ WSGI_APPLICATION = "foodgram.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": os.getenv(
-            "DB_ENGINE", "django.db.backends.postgresql"
-        ),  # django.db.backends.postgresql
+        "ENGINE": os.getenv("DB_ENGINE", "django.db.backends.postgresql"),  # django.db.backends.postgresql
         "NAME": os.getenv("DB_NAME", default="foodgram"),  # foodgram
         "USER": os.getenv("POSTGRES_USER", default="admin_foodgram"),  # admin_foodgram
         "PASSWORD": os.getenv("POSTGRES_PASSWORD", default="2367"),  # 2367
@@ -166,8 +162,8 @@ DJOSER = {
     "PERMISSIONS": {
         "recipe": ("api.permissions.AuthorStaffOrReadOnly,",),
         "recipe_list": ("api.permissions.AuthorStaffOrReadOnly",),
-        "user": ("api.permissions.OwnerUserOrReadOnly",),
-        "user_list": ("api.permissions.OwnerUserOrReadOnly",),
+        "user": ("api.permissions.AuthorStaffOrReadOnly",),
+        "user_list": ("api.permissions.AuthorStaffOrReadOnly",),
     },
     "SERIALIZERS": {
         "user": "api.serializers.UserSerializer",
