@@ -222,7 +222,7 @@ class AmountIngredient(models.Model):
     )
     amount = models.PositiveSmallIntegerField(
         verbose_name="Количество",
-        default=0,
+        default=1,
         validators=[MinValueValidator(1), MaxValueValidator(1000)],
     )
 
