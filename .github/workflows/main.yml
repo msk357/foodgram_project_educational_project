@@ -45,7 +45,7 @@ jobs:
             tags: msk357/foodgram_backend:latest
             file: backend/Dockerfile
 
-  """build_and_push_frontend_to_docker_hub:
+  build_and_push_frontend_to_docker_hub:
       name: Push frontend image to Docker Hub
       runs-on: ubuntu-latest
       needs: build_and_push_backend_to_docker_hub
@@ -65,7 +65,7 @@ jobs:
           with:
             push: true
             tags: msk357/foodgram_front:latest
-            file: frontend/Dockerfile"""
+            file: frontend/Dockerfile
 
   deploy:
       runs-on: ubuntu-latest
