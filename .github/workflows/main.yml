@@ -89,6 +89,6 @@ jobs:
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
-      - name: copy files to remote server
+        script: |
           run: scp -r /Users/msk3571/Dev/final/foodgram-project-react/docs msk357@158.160.35.92:/home/msk357
 
