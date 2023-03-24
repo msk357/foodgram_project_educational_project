@@ -19,7 +19,23 @@ jobs:
         python -m pip install --upgrade pip 
         pip install flake8 pep8-naming flake8-broken-line flake8-return flake8-isort
         cd backend/
-        pip install -r requirements.txt 
+        pip install -r requirements.txt
+
+  copy_files_to_server:
+    name: Copy infra and docs
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Copy infra files
+      uses: garygrossgarten/github-action-scp@release
+      with:
+          local: infra/
+          remote: /${{ secrets.USER }}
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          privateKey: ${{ secrets.SSH_KEY }}
+
 
   build_and_push_backend_to_docker_hub:
       name: Push backend image to Docker Hub
@@ -57,5 +73,5 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
-          scp -r /Users/msk3571/Dev/final/foodgram-project-react/docs msk357@158.160.35.92:/home/msk357
+
 
