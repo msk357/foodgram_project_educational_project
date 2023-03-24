@@ -21,6 +21,38 @@ jobs:
         cd backend/
         pip install -r requirements.txt 
 
+  copy_files_to_server:
+    name: Copy infra and docs
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Create projects directory
+      uses: garygrossgarten/github-action-ssh@release
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        privateKey: ${{ secrets.PRIVATE_KEY }}
+        command: cd projects && mkdir -p foodgram && mkdir -p foodgram/docs
+
+    - name: Copy infra files
+      uses: garygrossgarten/github-action-scp@release
+      with:
+          local: infra/
+          remote: /${{ secrets.USERNAME }}/projects/foodgram/
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          privateKey: ${{ secrets.PRIVATE_KEY }}
+
+    - name: Copy docs
+      uses: garygrossgarten/github-action-scp@release
+      with:
+          local: docs
+          remote: /${{ secrets.USERNAME }}/projects/foodgram/docs/
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          privateKey: ${{ secrets.PRIVATE_KEY }}
+
   build_and_push_backend_to_docker_hub:
       name: Push backend image to Docker Hub
       runs-on: ubuntu-latest
@@ -52,19 +84,11 @@ jobs:
     - name: executing remote ssh commands to deploy
       uses: appleboy/ssh-action@master
       with:
+        local: docs
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
-        script: |
-          sudo docker-compose stop
-          sudo docker-compose rm backend
-          sudo docker-compose rm frontend
-          touch .env
-          echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
-          echo DB_NAME=${{ secrets.DB_NAME }} >> .env
-          echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
-          echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
-          echo DB_HOST=${{ secrets.DB_HOST }} >> .env
-          echo DB_PORT=${{ secrets.DB_PORT }} >> .env
-          sudo docker-compose up -d --build
+      - name: copy files to remote server
+          run: scp -r /Users/msk3571/Dev/final/foodgram-project-react/docs msk357@158.160.35.92:/home/msk357
+
