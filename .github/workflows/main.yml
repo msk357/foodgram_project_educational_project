@@ -57,8 +57,7 @@ jobs:
         script: |
           cd /home/msk357/project/foodgram-project-react/infra
           sudo docker-compose stop
-          sudo docker rm app
-          sudo docker rm front
+          sudo docker rm -v app db
           touch .env
           echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
           echo DB_NAME=${{ secrets.DB_NAME }} >> .env
