@@ -55,7 +55,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
-          cd /home/msk357/foodgram-project-react/infra
+          cd /home/msk357/project/foodgram-project-react/infra
           sudo docker-compose stop
           sudo docker rm app
           sudo docker rm front
