@@ -29,7 +29,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", default="v&u3(*wr-2_gre4k*cy@ssiw$*pg$_zkg@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", default=False)
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", default=['158.160.35.92', 'localhost', 'foodgramservice.ddns.net'])
+ALLOWED_HOSTS = ['158.160.35.92', 'localhost', 'foodgramservice.ddns.net']
 
 INSTALLED_APPS = [
     "django.contrib.admin",
