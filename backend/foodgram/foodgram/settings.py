@@ -31,8 +31,6 @@ DEBUG = os.getenv("DEBUG", default=False)
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", default=['158.160.35.92', 'localhost', 'foodgramservice.ddns.net'])
 
-# Application definition
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
