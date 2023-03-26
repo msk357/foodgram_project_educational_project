@@ -8,6 +8,8 @@ class Tuples(tuple, Enum):
     # поиск по параметрам
     SYMBOL_TRUE_SEARCH = "1", "true"
     SYMBOL_FALSE_SEARCH = "0", "false"
+    ADD_METHODS = 'GET', 'POST'
+    DEL_METHODS = 'DELETE',
 
 
 class Limits(IntEnum):
