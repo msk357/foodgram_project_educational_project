@@ -72,9 +72,7 @@ class CustomUser(AbstractUser):
         verbose_name_plural = "Пользователи"
 
     def clean(self) -> None:
-        self.first_name = validate_field_name(self.first_name)
         self.username = validate_field_name(self.username)
-        self.last_name = validate_field_name(self.last_name)
         return super().clean()
 
     def __str__(self) -> str:
