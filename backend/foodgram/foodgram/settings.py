@@ -31,6 +31,11 @@ DEBUG = os.getenv("DEBUG", default=False)
 
 ALLOWED_HOSTS = ['158.160.35.92', 'localhost', 'foodgramservice.ddns.net']
 
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    'CSRF_TRUSTED_ORIGINS',
+    default='http://localhost, http://127.0.0.1, http://158.160.35.92, http://foodgramservice.ddns.net' 
+)
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",

@@ -55,9 +55,9 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
-          cd /home/msk357/project/foodgram-project-react/infra
+          cd project/foodgram-project-react/infra
           sudo docker-compose stop
-          sudo docker rm -v app db
+          sudo docker system prune -af
           touch .env
           echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
           echo DB_NAME=${{ secrets.DB_NAME }} >> .env
