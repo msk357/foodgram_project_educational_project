@@ -33,7 +33,7 @@ ALLOWED_HOSTS = ['158.160.35.92', 'localhost', 'foodgramservice.ddns.net']
 
 CSRF_TRUSTED_ORIGINS = os.getenv(
     'CSRF_TRUSTED_ORIGINS',
-    default='http://localhost, http://127.0.0.1, http://158.160.35.92, http://foodgramservice.ddns.net' 
+    default='http://localhost, http://127.0.0.1, http://158.160.35.92, http://10.128.0.34, http://foodgramservice.ddns.net' 
 )
 
 INSTALLED_APPS = [
@@ -141,11 +141,12 @@ USE_L10N = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'static'
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / MEDIA_URL
+
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
