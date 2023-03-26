@@ -1,7 +1,14 @@
-# praktikum_new_diplom
+# Foodgram project
+
+##  Информация для ревьювера
+IP сервера - 158.160.35.92
+Доменое имя - foodgramservice.ddns.net
+Почта суперпользователя - test357@gmail.com
+Логин - test
+Пароль - Triumvirat357!
 
 ##  Статусы обновления ветки через Git Actions
-![example branch parameter](https://github.com/msk357/foodgram-project-react/actions/workflows/foodgram-project-react.yml/badge.svg?branch=master)
+![example branch parameter](https://github.com/msk357/foodgram-project-react/actions/workflows/main.yml/badge.svg?branch=master)
 
 
 ## Описание проекта:
