@@ -158,6 +158,7 @@ class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
             queryset = queryset.filter(in_favorites__user=self.request.user)
         if is_favorit in Tuples.SYMBOL_FALSE_SEARCH.value:
             queryset = queryset.exclude(in_favorites__user=self.request.user)
+        queryset = queryset.order_by('-pub_date')
         return queryset
 
     @action(
