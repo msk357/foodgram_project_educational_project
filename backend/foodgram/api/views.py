@@ -22,6 +22,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
     HTTP_401_UNAUTHORIZED,
@@ -127,6 +128,7 @@ class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
     serializer_class = RecipeSerializer
     permission_classes = [AuthorStaffOrReadOnly]
     add_serializer = CropRecipeSerializer
+    pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
         """Получает queryset в соответствии с запросом.
@@ -158,7 +160,7 @@ class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
             queryset = queryset.filter(in_favorites__user=self.request.user)
         if is_favorit in Tuples.SYMBOL_FALSE_SEARCH.value:
             queryset = queryset.exclude(in_favorites__user=self.request.user)
-        queryset = queryset.order_by('-pub_date')
+        queryset = queryset.order_by('pub_date')
         return queryset
 
     @action(
@@ -203,10 +205,11 @@ class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
             shopping_list.append(
                 f'{ing["name"]}: {ing["amount"]} {ing["measurement"]}'
             )
+        shopping_list = '\n'.join(shopping_list)
         response = HttpResponse(
             shopping_list,
             content_type="text.txt; charset=utf-8"
         )
-        shopping_list = '\n'.join(shopping_list)
+
         response["Content-Disposition"] = f"attachment; filename={filename}"
         return response
