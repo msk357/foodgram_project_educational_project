@@ -122,12 +122,12 @@ class IngredientViewSet(ReadOnlyModelViewSet):
 
 
 class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
-    queryset = Recipe.objects.select_related("author")
+    queryset = Recipe.objects.select_related('author')
     serializer_class = RecipeSerializer
     permission_classes = [AuthorStaffOrReadOnly]
     add_serializer = CropRecipeSerializer
     pagination_class = FoodgramPagination
-    ordering = ('-pub_date',)
+    ordering = ('pub_date',)
 
     def get_queryset(self):
         """Получает queryset в соответствии с запросом.
