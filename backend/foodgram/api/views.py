@@ -1,6 +1,6 @@
 from api.permissions import AuthorStaffOrReadOnly, AdminOrReadOnly
 from api.mixins import CreateDelViewMixin
-from api.paginations import PaginationNone
+from api.paginations import FoodgramPagination
 from api.serializers import (
     TagSerializer,
     IngredientSerializer,
@@ -22,7 +22,6 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated
-from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
     HTTP_401_UNAUTHORIZED,
@@ -41,6 +40,7 @@ class UserViewSet(DjoserUserViewSet, ModelViewSet):
     """
     add_serializer = UserSubscribeSerializer
     permission_classes = [DjangoModelPermissions]
+    pagination_class = FoodgramPagination
 
     @action(
         methods=["post", "delete"],
@@ -108,7 +108,6 @@ class TagViewSet(ReadOnlyModelViewSet):
     Изменения доступны только администратору. 
     """ 
     queryset = Tag.objects.all() 
-    pagination_class = PaginationNone 
     serializer_class = TagSerializer 
     permission_classes = [AdminOrReadOnly] 
  
@@ -118,7 +117,6 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     Изменения доступны только администратору. 
     """ 
     queryset = Ingredient.objects.all() 
-    pagination_class = PaginationNone 
     serializer_class = IngredientSerializer 
     permission_classes = [AdminOrReadOnly] 
 
@@ -128,7 +126,7 @@ class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
     serializer_class = RecipeSerializer
     permission_classes = [AuthorStaffOrReadOnly]
     add_serializer = CropRecipeSerializer
-    pagination_class = LimitOffsetPagination
+    pagination_class = FoodgramPagination
 
     def get_queryset(self):
         """Получает queryset в соответствии с запросом.
