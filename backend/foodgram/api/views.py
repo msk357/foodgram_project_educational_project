@@ -207,5 +207,6 @@ class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
             shopping_list,
             content_type="text.txt; charset=utf-8"
         )
+        shopping_list = '\n'.join(shopping_list)
         response["Content-Disposition"] = f"attachment; filename={filename}"
         return response
