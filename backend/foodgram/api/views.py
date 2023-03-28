@@ -1,6 +1,6 @@
 from api.permissions import AuthorStaffOrReadOnly, AdminOrReadOnly
 from api.mixins import CreateDelViewMixin
-from api.paginations import PageLimitPagination
+from api.paginations import PageLimitPagination, SubPagination
 from api.serializers import (
     TagSerializer,
     IngredientSerializer,
@@ -40,7 +40,7 @@ class UserViewSet(DjoserUserViewSet, ModelViewSet):
     """
     add_serializer = UserSubscribeSerializer
     permission_classes = [DjangoModelPermissions]
-    pagination_class = PageLimitPagination
+    pagination_class = SubPagination
 
     @action(
         methods=["post", "delete"],

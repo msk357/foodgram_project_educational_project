@@ -49,8 +49,6 @@ INSTALLED_APPS = [
     "djoser",
     "django_filters",
 
-    "corsheaders",
-
     "users.apps.UsersConfig",
     "api.apps.ApiConfig",
     "recipes.apps.RecipesConfig",
@@ -58,9 +56,6 @@ INSTALLED_APPS = [
 
 # CustomUser connection
 AUTH_USER_MODEL = "users.CustomUser"
-
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_URLS_REGEX = r"^/api/.*$"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
