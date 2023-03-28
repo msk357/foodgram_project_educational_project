@@ -7,5 +7,13 @@ class PageLimitPagination(PageNumberPagination):
 
 
 class SubPagination(PageNumberPagination):
-    """Стандартный пагинатор"""
-    page_size = 3
+    page_size_query_param = 'recipes_limit'
+    max_page_size = 3
+
+    def get_page_size(self, request):
+        if self.page_size_query_param:
+            try:
+                return int(request.query_params[self.page_size_query_param])
+            except (KeyError, ValueError):
+                pass
+        return self.page_size
