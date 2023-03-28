@@ -1,6 +1,6 @@
 from api.permissions import AuthorStaffOrReadOnly, AdminOrReadOnly
 from api.mixins import CreateDelViewMixin
-from api.paginations import FoodgramPagination, SubscriptionsPagination
+from api.paginations import PageLimitPagination
 from api.serializers import (
     TagSerializer,
     IngredientSerializer,
@@ -40,7 +40,7 @@ class UserViewSet(DjoserUserViewSet, ModelViewSet):
     """
     add_serializer = UserSubscribeSerializer
     permission_classes = [DjangoModelPermissions]
-    pagination_class = SubscriptionsPagination
+    pagination_class = PageLimitPagination
 
     @action(
         methods=["post", "delete"],
@@ -71,6 +71,7 @@ class UserViewSet(DjoserUserViewSet, ModelViewSet):
             return Response(
                 {"success": "Подписка подключена."}, status=HTTP_201_CREATED
             )
+
         if request.method == "DELETE":
             if request.user.is_anonymous:
                 return Response(
@@ -83,10 +84,7 @@ class UserViewSet(DjoserUserViewSet, ModelViewSet):
                 {"success": "Подписка удалена."}, status=HTTP_204_NO_CONTENT
             )
 
-    @action(
-            methods=["get"],
-            detail=False
-    )
+    @action(methods=["get"],detail=False)
     def subscriptions(self, request: WSGIRequest) -> Response:
         """Вывод списка подписчиков.
         Метод проверят авторизацию пользователя.
@@ -100,7 +98,7 @@ class UserViewSet(DjoserUserViewSet, ModelViewSet):
             CustomUser.objects.filter(subscribers__user=request.user)
         )
         serializer = UserSubscribeSerializer(pages, many=True)
-        return self.get_paginated_response(serializer.data)[:3]
+        return self.get_paginated_response(serializer.data)
     
 
 class TagViewSet(ReadOnlyModelViewSet): 
@@ -126,13 +124,12 @@ class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
     serializer_class = RecipeSerializer
     permission_classes = [AuthorStaffOrReadOnly]
     add_serializer = CropRecipeSerializer
-    pagination_class = FoodgramPagination
-    ordering = ('-pub_date', )
+    pagination_class = PageLimitPagination
 
     def get_queryset(self):
         """Получает queryset в соответствии с запросом.
         """
-        queryset = Recipe.objects.select_related('author').order_by('-pub_date')
+        queryset = Recipe.objects.select_related('author')
 
         tags = self.request.query_params.getlist(UrlRequests.TAGS.value)
         if tags:
@@ -159,7 +156,7 @@ class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
             queryset = queryset.filter(in_favorites__user=self.request.user)
         if is_favorit in Tuples.SYMBOL_FALSE_SEARCH.value:
             queryset = queryset.exclude(in_favorites__user=self.request.user)
-        return queryset.order_by('-pub_date')
+        return queryset
 
     @action(
         methods=["get", "post", "delete"],
