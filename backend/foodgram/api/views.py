@@ -100,7 +100,7 @@ class UserViewSet(DjoserUserViewSet, ModelViewSet):
             CustomUser.objects.filter(subscribers__user=request.user)
         )
         serializer = UserSubscribeSerializer(pages, many=True)
-        return self.get_paginated_response(serializer.data)
+        return self.get_paginated_response(serializer.data)[:3]
     
 
 class TagViewSet(ReadOnlyModelViewSet): 
@@ -134,18 +134,18 @@ class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
         """
         queryset = Recipe.objects.select_related('author').order_by('-pub_date')
 
-        tags: list = self.request.query_params.getlist(UrlRequests.TAGS.value)
+        tags = self.request.query_params.getlist(UrlRequests.TAGS.value)
         if tags:
             queryset = queryset.filter(tags__slug__in=tags).distinct()
 
-        author: str = self.request.query_params.get(UrlRequests.AUTHOR.value)
+        author = self.request.query_params.get(UrlRequests.AUTHOR.value)
         if author:
             queryset = queryset.filter(author=author)
 
         if self.request.user.is_anonymous:
             return queryset
 
-        is_in_cart: str = self.request.query_params.get(UrlRequests.SHOP_CART)
+        is_in_cart = self.request.query_params.get(UrlRequests.SHOP_CART)
         if is_in_cart in Tuples.SYMBOL_TRUE_SEARCH.value:
             queryset = queryset.filter(
                 in_shopping_cart__user=self.request.user
@@ -154,12 +154,12 @@ class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
             queryset = queryset.exclude(
                 in_shopping_cart__user=self.request.user
             )
-        is_favorit: str = self.request.query_params.get(UrlRequests.FAVORIT)
+        is_favorit = self.request.query_params.get(UrlRequests.FAVORIT)
         if is_favorit in Tuples.SYMBOL_TRUE_SEARCH.value:
             queryset = queryset.filter(in_favorites__user=self.request.user)
         if is_favorit in Tuples.SYMBOL_FALSE_SEARCH.value:
             queryset = queryset.exclude(in_favorites__user=self.request.user)
-        return queryset
+        return queryset.order_by('-pub_date')
 
     @action(
         methods=["get", "post", "delete"],
