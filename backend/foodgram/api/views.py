@@ -1,6 +1,6 @@
 from api.permissions import AuthorStaffOrReadOnly, AdminOrReadOnly
 from api.mixins import CreateDelViewMixin
-from api.paginations import FoodgramPagination
+from api.paginations import FoodgramPagination, SubscriptionsPagination
 from api.serializers import (
     TagSerializer,
     IngredientSerializer,
@@ -91,6 +91,7 @@ class UserViewSet(DjoserUserViewSet, ModelViewSet):
         """Вывод списка подписчиков.
         Метод проверят авторизацию пользователя.
         """
+        self.pagination_class = SubscriptionsPagination
         if request.user.is_anonymous:
             return Response(
                 {"success": "Пользователь не авторизован."},
