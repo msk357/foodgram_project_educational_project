@@ -31,7 +31,7 @@ from rest_framework.status import (
 )
 
 
-class UserViewSet(DjoserUserViewSet, ModelViewSet):
+class UserViewSet(DjoserUserViewSet, CreateDelViewMixin):
     """Для работы с моделью User.
     Доступен функционал:
     - Вывод пользователей;
@@ -52,37 +52,7 @@ class UserViewSet(DjoserUserViewSet, ModelViewSet):
         Метод проверят авторизацию пользователя и
         подписку на собственный аккаунт.
         """
-        user = request.user
-        author = get_object_or_404(CustomUser, id=id)
-        if request.method == "POST":
-            if user == author:
-                return Response(
-                    {"error": "Подписка на самого себя."},
-                    status=HTTP_400_BAD_REQUEST
-                )
-            follow, created = Follow.objects.get_or_create(
-                user=user, author=author
-            )
-            if not created:
-                return Response(
-                    {"error": "Вы уже подписаны на автора."},
-                    status=HTTP_400_BAD_REQUEST,
-                )
-            return Response(
-                {"success": "Подписка подключена."}, status=HTTP_201_CREATED
-            )
-
-        if request.method == "DELETE":
-            if request.user.is_anonymous:
-                return Response(
-                    {"success": "Пользователь не авторизован."},
-                    status=HTTP_401_UNAUTHORIZED,
-                )
-            follow = get_object_or_404(Follow, user=user, author=author)
-            follow.delete()
-            return Response(
-                {"success": "Подписка удалена."}, status=HTTP_204_NO_CONTENT
-            )
+        return self.create_del_obj(id, Follow, Q(author__id=id))
 
     @action(methods=["get"],detail=False)
     def subscriptions(self, request: WSGIRequest) -> Response:
