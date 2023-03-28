@@ -40,7 +40,7 @@ class UserViewSet(DjoserUserViewSet, ModelViewSet):
     """
     add_serializer = UserSubscribeSerializer
     permission_classes = [DjangoModelPermissions]
-    pagination_class = FoodgramPagination
+    pagination_class = SubscriptionsPagination
 
     @action(
         methods=["post", "delete"],
@@ -91,7 +91,6 @@ class UserViewSet(DjoserUserViewSet, ModelViewSet):
         """Вывод списка подписчиков.
         Метод проверят авторизацию пользователя.
         """
-        self.pagination_class = SubscriptionsPagination
         if request.user.is_anonymous:
             return Response(
                 {"success": "Пользователь не авторизован."},
