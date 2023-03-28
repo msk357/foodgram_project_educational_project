@@ -41,7 +41,6 @@ class UserViewSet(DjoserUserViewSet, ModelViewSet):
     """
     add_serializer = UserSubscribeSerializer
     permission_classes = [DjangoModelPermissions]
-    pagination_class = SubPagination
 
     @action(
         methods=["post", "delete"],
