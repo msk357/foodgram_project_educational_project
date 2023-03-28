@@ -7,7 +7,7 @@ class PageLimitPagination(PageNumberPagination):
 
 
 class SubPagination(PageNumberPagination):
-    page_size_query_param = 'recipes_limit'
+    page_size_query_param = 'limit'
     max_page_size = 3
 
     def get_page_size(self, request):

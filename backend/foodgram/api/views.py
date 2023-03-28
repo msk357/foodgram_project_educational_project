@@ -19,6 +19,7 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.db.models import F, Q, Sum
 from django.http.response import HttpResponse
 from rest_framework.response import Response
+from rest_framework import filters
 from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated
@@ -120,11 +121,13 @@ class IngredientViewSet(ReadOnlyModelViewSet):
 
 
 class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
-    queryset = Recipe.objects.select_related('author')
+    queryset = Recipe.objects.select_related('author').order_by('-pub_date',)
     serializer_class = RecipeSerializer
     permission_classes = [AuthorStaffOrReadOnly]
     add_serializer = CropRecipeSerializer
     pagination_class = PageLimitPagination
+    ordering_fields = ('pub_date')
+    ordering = ('-pub_date',)
 
     def get_queryset(self):
         """Получает queryset в соответствии с запросом.
@@ -156,7 +159,7 @@ class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
             queryset = queryset.filter(in_favorites__user=self.request.user)
         if is_favorit in Tuples.SYMBOL_FALSE_SEARCH.value:
             queryset = queryset.exclude(in_favorites__user=self.request.user)
-        return queryset
+        return queryset.order_by('-pub_date',)
 
     @action(
         methods=["get", "post", "delete"],
