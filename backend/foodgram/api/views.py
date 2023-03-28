@@ -127,11 +127,12 @@ class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
     permission_classes = [AuthorStaffOrReadOnly]
     add_serializer = CropRecipeSerializer
     pagination_class = FoodgramPagination
+    ordering = ('-pub_date',)
 
     def get_queryset(self):
         """Получает queryset в соответствии с запросом.
         """
-        queryset = self.queryset
+        queryset = Recipe.objects.select_related('author').order_by('-pub_date')
 
         tags: list = self.request.query_params.getlist(UrlRequests.TAGS.value)
         if tags:
@@ -158,7 +159,7 @@ class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
             queryset = queryset.filter(in_favorites__user=self.request.user)
         if is_favorit in Tuples.SYMBOL_FALSE_SEARCH.value:
             queryset = queryset.exclude(in_favorites__user=self.request.user)
-        return queryset.order_by('-pub_date')
+        return queryset
 
     @action(
         methods=["get", "post", "delete"],
