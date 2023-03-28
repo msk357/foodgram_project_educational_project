@@ -27,9 +27,9 @@ DATE_TIME_FORMAT = "%d/%m/%Y %H:%M"
 SECRET_KEY = os.getenv("SECRET_KEY", default="v&u3(*wr-2_gre4k*cy@ssiw$*pg$_zkg@^l4e=%cm-mafj#s8")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", default=False)
+DEBUG = os.getenv("DEBUG", default=True)
 
-ALLOWED_HOSTS = os.getenv("DEBUG", default=['158.160.35.92', 'localhost', 'foodgramservice.ddns.net'])
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", default=['158.160.35.92', 'localhost', 'foodgramservice.ddns.net'])
 
 CSRF_TRUSTED_ORIGINS = os.getenv(
     'CSRF_TRUSTED_ORIGINS',
