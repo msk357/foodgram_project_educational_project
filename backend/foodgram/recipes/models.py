@@ -99,7 +99,7 @@ class Ingredient(models.Model):
     class Meta:
         verbose_name = "Ингридиент"
         verbose_name_plural = "Ингридиенты"
-        ordering = ("id",)
+        ordering = ("name",)
         constraints = [
             models.UniqueConstraint(
                 fields=["name", "measurement_unit"], name="unique_ingredients"
@@ -178,16 +178,18 @@ class Recipe(models.Model):
         through="recipes.AmountIngredient",
     )
     pub_date = models.DateField(
-        verbose_name="Дата публикации", auto_now_add=True
+        verbose_name='Дата публикации',
+        auto_now_add=True,
+        editable=False,
     )
     tags = models.ManyToManyField(
         Tag, verbose_name="Тег", related_name="recipes"
     )
 
     class Meta:
-        ordering = ('-pub_date',)
         verbose_name = "Рецепт"
         verbose_name_plural = "Рецепты"
+        ordering = ('-pub_date', )
 
     def clean(self) -> None:
         self.name = validate_field_name(self.name)
@@ -229,10 +231,7 @@ class AmountIngredient(models.Model):
     class Meta:
         verbose_name = "Ингридиент"
         verbose_name_plural = "Количество ингридиентов"
-        ordering = (
-            "recipe",
-            "ingredients",
-        )
+        ordering = ('recipe', )
         constraints = [
             models.UniqueConstraint(
                 fields=["recipe", "ingredients"], name="unique_ingredient"
