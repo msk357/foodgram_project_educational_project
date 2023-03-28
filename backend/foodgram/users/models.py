@@ -10,6 +10,7 @@ Models:
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.validators import validate_email
+from django.db.models import F, Q
 
 from core.enums import Limits
 from core.validators import validate_field_name
@@ -105,15 +106,19 @@ class Follow(models.Model):
         editable=False
     )
 
-
     class Meta:
-        constraints = [
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+        constraints = (
             models.UniqueConstraint(
-                fields=["user", "author"], name="unique_user_author"
+                fields=('author', 'user'),
+                name='\nRepeat subscription\n',
+            ),
+            models.CheckConstraint(
+                check=~Q(author=F('user')),
+                name='\nNo self subscription\n'
             )
-        ]
-        verbose_name = "Подписка"
-        verbose_name_plural = "Подписки"
+        )
 
     def __str__(self):
         return f"{self.user} подписан на {self.author}"
