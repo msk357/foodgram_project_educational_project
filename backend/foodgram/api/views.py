@@ -50,13 +50,26 @@ class UserViewSet(DjoserUserViewSet, CreateDelViewMixin):
         permission_classes=[IsAuthenticated]
     )
     def subscribe(self, request: WSGIRequest, id) -> Response:
-        """Создание и удаление подписки.
-        Метод проверят авторизацию пользователя и
-        подписку на собственный аккаунт.
-        """
-        return self.create_del_obj(id, Follow, Q(author__id=id))
+        user = request.user
+        author = get_object_or_404(CustomUser, id=id)
 
-    @action(methods=["get"],detail=False)
+        if request.method == 'POST':
+            if user == author:
+                return Response({'error': 'You cannot subscribe to yourself.'}, status=HTTP_204_NO_CONTENT)
+            follow, created = Follow.objects.get_or_create(user=user, author=author)
+            if not created:
+                return Response({'error': 'You are already subscribed to this author.'}, status=HTTP_204_NO_CONTENT)
+            return Response({'success': 'Subscription added successfully.'}, status=HTTP_201_CREATED)
+        elif request.method == 'DELETE':
+            follow = get_object_or_404(Follow, user=user, author=author)
+            follow.delete()
+            return Response({'success': 'Subscription removed successfully.'}, status=HTTP_201_CREATED)
+        else:
+            return Response({'error': 'Invalid request method.'}, status=HTTP_400_BAD_REQUEST)  
+
+
+
+    @action(methods=["get"], detail=False)
     def subscriptions(self, request: WSGIRequest) -> Response:
         """Вывод списка подписчиков.
         Метод проверят авторизацию пользователя.
