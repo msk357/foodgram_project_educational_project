@@ -77,7 +77,7 @@ class UserViewSet(DjoserUserViewSet, CreateDelViewMixin):
             CustomUser.objects.filter(subscribers__user=self.request.user)
         )
         serializer = UserSubscribeSerializer(pages, many=True)
-        return Response(serializer.data[:3])
+        return self.get_paginated_response(serializer.data)
     
 
 class TagViewSet(ReadOnlyModelViewSet): 
