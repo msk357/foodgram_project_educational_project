@@ -79,7 +79,7 @@ class UserSubscribeSerializer(UserSerializer):
 
     def get_recipes(self, obj: Recipe):
         first_three = obj.recipes.all()[:3]
-        return RecipeSerializer(first_three, many=True).data
+        return CropRecipeSerializer(first_three, many=True).data
 
     def get_is_subscribed(*args) -> bool:
         """Сериализатор выводит только подписчиков.

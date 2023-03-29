@@ -40,7 +40,7 @@ class UserViewSet(DjoserUserViewSet, CreateDelViewMixin):
     - Оформление/удаление подписки (метод subscribe);
     - Вывод списка подписок (метод subscriptions).
     """
-    pagination_class = PageLimitPagination
+
     add_serializer = UserSubscribeSerializer
     permission_classes = [DjangoModelPermissions]
 
