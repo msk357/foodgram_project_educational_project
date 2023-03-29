@@ -22,6 +22,7 @@ from rest_framework.response import Response
 from rest_framework import filters
 from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated
 from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
@@ -65,9 +66,8 @@ class UserViewSet(DjoserUserViewSet, CreateDelViewMixin):
                 {"success": "Пользователь не авторизован."},
                 status=HTTP_401_UNAUTHORIZED,
             )
+
         authors = CustomUser.objects.filter(subscribers__user=request.user)
-        
-        # Делаем prefetch_related для рецептов и ингредиентов, чтобы сократить количество запросов к БД
         recipes_prefetch = Prefetch(
             "recipes",
             queryset=Recipe.objects.prefetch_related(
@@ -75,9 +75,14 @@ class UserViewSet(DjoserUserViewSet, CreateDelViewMixin):
             )
         )
         
-        authors = authors.prefetch_related(recipes_prefetch)[:3]
-        serializer = UserSubscribeSerializer(authors, many=True)
-        return self.get_paginated_response(serializer.data)
+        authors = authors.prefetch_related(recipes_prefetch)
+        
+        paginator = PageNumberPagination()
+        paginator.page_size = 3
+        result_page = paginator.paginate_queryset(authors, request)
+        
+        serializer = UserSubscribeSerializer(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
     
 
 class TagViewSet(ReadOnlyModelViewSet): 
