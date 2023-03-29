@@ -5,4 +5,4 @@ class PageLimitPagination(PageNumberPagination):
     page_size_query_param = 'limit'
 
 class SubPagination(PageNumberPagination):
-    page_size_query_param = 3
+    page_query_param = 3

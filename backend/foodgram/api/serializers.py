@@ -10,9 +10,6 @@ from recipes.models import Ingredient, Recipe, Tag
 
 class CropRecipeSerializer(ModelSerializer):
 
-    """Сериализатор для модели Recipe.
-    Убраны поля: tags, text, ingredients.
-    """
 
     class Meta:
         model = Recipe
@@ -22,7 +19,6 @@ class CropRecipeSerializer(ModelSerializer):
 
 class UserSerializer(ModelSerializer):
     """Сериализатор для использования с моделью CustomUser."""
-
     is_subscribed = SerializerMethodField()
 
     class Meta:
@@ -64,8 +60,7 @@ class UserSerializer(ModelSerializer):
 
 class UserSubscribeSerializer(UserSerializer):
     """Сериализатор вывода подписок пользователя."""
-
-    recipes = CropRecipeSerializer(many=True, read_only=True)
+    recipes = SerializerMethodField()
     recipes_count = SerializerMethodField()
 
     class Meta:
@@ -81,6 +76,10 @@ class UserSubscribeSerializer(UserSerializer):
             "recipes_count",
         )
         read_only_fields = ("__all__",)
+
+    def get_recipes(self, obj: Recipe):
+        first_three = obj.recipes.all()[:3]
+        return RecipeSerializer(first_three, many=True).data
 
     def get_is_subscribed(*args) -> bool:
         """Сериализатор выводит только подписчиков.
