@@ -16,7 +16,7 @@ from core.enums import Tuples, UrlRequests
 from djoser.views import UserViewSet as DjoserUserViewSet
 from django.shortcuts import get_object_or_404
 from django.core.handlers.wsgi import WSGIRequest
-from django.db.models import F, Q, Sum
+from django.db.models import F, Q, Sum, Prefetch
 from django.http.response import HttpResponse
 from rest_framework.response import Response
 from rest_framework import filters
@@ -65,10 +65,18 @@ class UserViewSet(DjoserUserViewSet, CreateDelViewMixin):
                 {"success": "Пользователь не авторизован."},
                 status=HTTP_401_UNAUTHORIZED,
             )
-        pages = self.paginate_queryset(
-            CustomUser.objects.filter(subscribers__user=request.user)
+        authors = CustomUser.objects.filter(subscribers__user=request.user)
+        
+        # Делаем prefetch_related для рецептов и ингредиентов, чтобы сократить количество запросов к БД
+        recipes_prefetch = Prefetch(
+            "recipes",
+            queryset=Recipe.objects.prefetch_related(
+                "ingredients__ingredient"
+            )
         )
-        serializer = UserSubscribeSerializer(pages, many=True)
+        
+        authors = authors.prefetch_related(recipes_prefetch)[:3]
+        serializer = UserSubscribeSerializer(authors, many=True)
         return self.get_paginated_response(serializer.data)
     
 
