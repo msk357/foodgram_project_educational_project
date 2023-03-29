@@ -61,28 +61,14 @@ class UserViewSet(DjoserUserViewSet, CreateDelViewMixin):
         """Вывод списка подписчиков.
         Метод проверят авторизацию пользователя.
         """
-        if request.user.is_anonymous:
-            return Response(
-                {"success": "Пользователь не авторизован."},
-                status=HTTP_401_UNAUTHORIZED,
-            )
+        if self.request.user.is_anonymous:
+            return Response(status=HTTP_401_UNAUTHORIZED)
 
-        authors = CustomUser.objects.filter(subscribers__user=request.user)
-        recipes_prefetch = Prefetch(
-            "recipes",
-            queryset=Recipe.objects.prefetch_related(
-                "ingredients__ingredient"
-            )
+        pages = self.paginate_queryset(
+            CustomUser.objects.filter(subscribers__user=self.request.user)
         )
-        
-        authors = authors.prefetch_related(recipes_prefetch)
-        
-        paginator = PageNumberPagination()
-        paginator.page_size = 3
-        result_page = paginator.paginate_queryset(authors, request)
-        
-        serializer = UserSubscribeSerializer(result_page, many=True)
-        return paginator.get_paginated_response(serializer.data)
+        serializer = UserSubscribeSerializer(pages, many=True)
+        return self.get_paginated_response(serializer.data)
     
 
 class TagViewSet(ReadOnlyModelViewSet): 
