@@ -67,24 +67,17 @@ class UserViewSet(DjoserUserViewSet, CreateDelViewMixin):
         else:
             return Response({'error': 'Ошибочный метод.'}, status=HTTP_400_BAD_REQUEST)  
 
+
     @action(methods=["get"], detail=False)
     def subscriptions(self, request: WSGIRequest) -> Response:
-        """Вывод списка подписчиков.
-        Метод проверят авторизацию пользователя.
-        """
         if self.request.user.is_anonymous:
             return Response(status=HTTP_401_UNAUTHORIZED)
 
-        authors = CustomUser.objects.filter(subscribers__user=request.user)
-        recipes_prefetch = Prefetch(
-            "recipes",
-            queryset=Recipe.objects.prefetch_related(
-                "ingredients__ingredient"
-            )[:3],
+        pages = self.paginate_queryset(
+            CustomUser.objects.filter(subscribers__user=self.request.user)
         )
-        authors = authors.prefetch_related(recipes_prefetch)
-        serializer = UserSubscribeSerializer(authors, many=True)
-        return Response(serializer.data)
+        serializer = UserSubscribeSerializer(pages, many=True)
+        return self.get_paginated_response(serializer.data)
     
 
 class TagViewSet(ReadOnlyModelViewSet): 

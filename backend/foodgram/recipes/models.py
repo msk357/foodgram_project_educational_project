@@ -183,7 +183,9 @@ class Recipe(models.Model):
         editable=False,
     )
     tags = models.ManyToManyField(
-        Tag, verbose_name="Тег", related_name="recipes"
+        Tag,
+        verbose_name="Тег",
+        related_name="recipes",
     )
 
     class Meta:
