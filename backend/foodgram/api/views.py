@@ -80,7 +80,7 @@ class UserViewSet(DjoserUserViewSet, CreateDelViewMixin):
             "recipes",
             queryset=Recipe.objects.prefetch_related(
                 "ingredients__ingredient"
-            ).order_by('-pub_date')[:3],
+            )[:3],
         )
         authors = authors.prefetch_related(recipes_prefetch)
         serializer = UserSubscribeSerializer(authors, many=True)
