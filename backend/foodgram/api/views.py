@@ -80,16 +80,13 @@ class UserViewSet(DjoserUserViewSet, CreateDelViewMixin):
             "recipes",
             queryset=Recipe.objects.prefetch_related(
                 "ingredients__ingredient"
-            )
+            ).order_by("-created_at")[:3],
         )
+
         authors = authors.prefetch_related(recipes_prefetch)
 
-        paginator = PageNumberPagination()
-        paginator.page_size = 3
-        result_page = paginator.paginate_queryset(authors, request)
-        
-        serializer = UserSubscribeSerializer(result_page, many=True)
-        return paginator.get_paginated_response(serializer.data)
+        serializer = UserSubscribeSerializer(authors, many=True)
+        return Response(serializer.data)
     
 
 class TagViewSet(ReadOnlyModelViewSet): 
