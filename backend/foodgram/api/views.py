@@ -74,10 +74,10 @@ class UserViewSet(DjoserUserViewSet, CreateDelViewMixin):
             return Response(status=HTTP_401_UNAUTHORIZED)
 
         pages = self.paginate_queryset(
-            CustomUser.objects.filter(subscribers__user=self.request.user)[:3]
+            CustomUser.objects.filter(subscribers__user=self.request.user)
         )
         serializer = UserSubscribeSerializer(pages, many=True)
-        return self.get_paginated_response(serializer.data)
+        return Response(serializer.data[:3])
     
 
 class TagViewSet(ReadOnlyModelViewSet): 
