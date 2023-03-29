@@ -55,19 +55,17 @@ class UserViewSet(DjoserUserViewSet, CreateDelViewMixin):
 
         if request.method == 'POST':
             if user == author:
-                return Response({'error': 'You cannot subscribe to yourself.'}, status=HTTP_204_NO_CONTENT)
+                return Response({'error': 'Нельзя подписаться на себя'}, status=HTTP_204_NO_CONTENT)
             follow, created = Follow.objects.get_or_create(user=user, author=author)
             if not created:
-                return Response({'error': 'You are already subscribed to this author.'}, status=HTTP_204_NO_CONTENT)
-            return Response({'success': 'Subscription added successfully.'}, status=HTTP_201_CREATED)
+                return Response({'error': 'Вы уже подписаны на автора.'}, status=HTTP_204_NO_CONTENT)
+            return Response({'success': 'Подписка оформлена.'}, status=HTTP_201_CREATED)
         elif request.method == 'DELETE':
             follow = get_object_or_404(Follow, user=user, author=author)
             follow.delete()
-            return Response({'success': 'Subscription removed successfully.'}, status=HTTP_201_CREATED)
+            return Response({'success': 'Подписка удалена.'}, status=HTTP_201_CREATED)
         else:
-            return Response({'error': 'Invalid request method.'}, status=HTTP_400_BAD_REQUEST)  
-
-
+            return Response({'error': 'Ошибочный метод.'}, status=HTTP_400_BAD_REQUEST)  
 
     @action(methods=["get"], detail=False)
     def subscriptions(self, request: WSGIRequest) -> Response:
@@ -77,11 +75,21 @@ class UserViewSet(DjoserUserViewSet, CreateDelViewMixin):
         if self.request.user.is_anonymous:
             return Response(status=HTTP_401_UNAUTHORIZED)
 
-        pages = self.paginate_queryset(
-            CustomUser.objects.filter(subscribers__user=self.request.user)
+        authors = CustomUser.objects.filter(subscribers__user=request.user)
+        recipes_prefetch = Prefetch(
+            "recipes",
+            queryset=Recipe.objects.prefetch_related(
+                "ingredients__ingredient"
+            )
         )
-        serializer = UserSubscribeSerializer(pages, many=True)
-        return self.get_paginated_response(serializer.data)
+        authors = authors.prefetch_related(recipes_prefetch)
+
+        paginator = PageNumberPagination()
+        paginator.page_size = 3
+        result_page = paginator.paginate_queryset(authors, request)
+        
+        serializer = UserSubscribeSerializer(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
     
 
 class TagViewSet(ReadOnlyModelViewSet): 
