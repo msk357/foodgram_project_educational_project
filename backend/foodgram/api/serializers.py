@@ -59,7 +59,7 @@ class UserSerializer(ModelSerializer):
 
 class UserSubscribeSerializer(UserSerializer):
     """Сериализатор вывода подписок пользователя."""
-    recipes = CropRecipeSerializer()
+    recipes = SerializerMethodField()
     recipes_count = SerializerMethodField()
 
     class Meta:
@@ -76,9 +76,14 @@ class UserSubscribeSerializer(UserSerializer):
         )
         read_only_fields = ("__all__",)
 
-    def get_recipes(self, obj: Recipe):
-        first_three = obj.recipes.all()[:3]
-        return CropRecipeSerializer(first_three, many=True).data
+    def get_recipes(self, obj):
+        request = self.context.get('request')
+        limit = request.GET.get('recipes_limit')
+        recipes = obj.recipes.all()
+        if limit:
+            recipes = recipes[:int(limit)]
+        serializer = RecipeSerializer(recipes, many=True, read_only=True)
+        return serializer.data
 
     def get_is_subscribed(*args) -> bool:
         """Сериализатор выводит только подписчиков.

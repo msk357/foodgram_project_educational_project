@@ -74,10 +74,10 @@ class UserViewSet(DjoserUserViewSet, CreateDelViewMixin):
         if self.request.user.is_anonymous:
             return Response(status=HTTP_401_UNAUTHORIZED)
 
-        pages = self.paginate_queryset(
-            CustomUser.objects.filter(subscribers__user=self.request.user)
-        )
-        serializer = UserSubscribeSerializer(pages, many=True)
+        queryset = CustomUser.objects.filter(subscribers__user=request.user)
+        page = self.paginate_queryset(queryset)
+        serializer = UserSubscribeSerializer(page, many=True,
+                                             context={'request': request})
         return self.get_paginated_response(serializer.data)
     
 
