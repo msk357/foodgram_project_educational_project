@@ -69,7 +69,10 @@ class UserViewSet(DjoserUserViewSet, CreateDelViewMixin):
             return Response({'error': 'Ошибочный метод.'}, status=HTTP_400_BAD_REQUEST)  
 
     @action(methods=["get"], detail=False)
-    def subscriptions(self, request: WSGIRequest) -> Response:    
+    def subscriptions(self, request: WSGIRequest) -> Response:
+        if self.request.user.is_anonymous:
+            return Response(status=HTTP_401_UNAUTHORIZED)
+
         page = self.paginate_queryset(
             CustomUser.objects.filter(subscribers__user=self.request.user)
         )
@@ -78,9 +81,7 @@ class UserViewSet(DjoserUserViewSet, CreateDelViewMixin):
             many=True,
             context={'recipes_limit': request.query_params.get('recipes_limit', 3)}
         )
-        return self.get_paginated_response(serializer.data)    
-
-
+        return self.get_paginated_response(serializer.data)
 
 
 class TagViewSet(ReadOnlyModelViewSet): 
@@ -102,13 +103,11 @@ class IngredientViewSet(ReadOnlyModelViewSet):
 
 
 class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
-    queryset = Recipe.objects.select_related('author').order_by('-pub_date',)
+    queryset = Recipe.objects.select_related('author')
     serializer_class = RecipeSerializer
     permission_classes = [AuthorStaffOrReadOnly]
     add_serializer = CropRecipeSerializer
     pagination_class = PageLimitPagination
-    ordering_fields = ('pub_date')
-    ordering = ('-pub_date',)
 
     def get_queryset(self):
         """Получает queryset в соответствии с запросом.
@@ -140,7 +139,7 @@ class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
             queryset = queryset.filter(in_favorites__user=self.request.user)
         if is_favorit in Tuples.SYMBOL_FALSE_SEARCH.value:
             queryset = queryset.exclude(in_favorites__user=self.request.user)
-        return queryset.order_by('-pub_date',)
+        return queryset
 
     @action(
         methods=["get", "post", "delete"],
