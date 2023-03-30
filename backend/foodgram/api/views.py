@@ -42,6 +42,7 @@ class UserViewSet(DjoserUserViewSet, CreateDelViewMixin):
     """
 
     add_serializer = UserSubscribeSerializer
+    pagination_class = PageLimitPagination
     permission_classes = [DjangoModelPermissions]
 
     @action(

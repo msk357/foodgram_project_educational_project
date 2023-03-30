@@ -9,8 +9,7 @@ from recipes.models import Ingredient, Recipe, Tag
 
 
 class CropRecipeSerializer(ModelSerializer):
-
-
+    """Сериализатор вывода рецептов по подпискам."""
     class Meta:
         model = Recipe
         fields = "id", "name", "image", "cooking_time"
@@ -60,7 +59,7 @@ class UserSerializer(ModelSerializer):
 
 class UserSubscribeSerializer(UserSerializer):
     """Сериализатор вывода подписок пользователя."""
-    recipes = SerializerMethodField()
+    recipes = CropRecipeSerializer()
     recipes_count = SerializerMethodField()
 
     class Meta:
