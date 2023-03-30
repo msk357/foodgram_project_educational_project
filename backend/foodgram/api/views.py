@@ -40,7 +40,6 @@ class UserViewSet(DjoserUserViewSet, CreateDelViewMixin):
     - Оформление/удаление подписки (метод subscribe);
     - Вывод списка подписок (метод subscriptions).
     """
-
     add_serializer = UserSubscribeSerializer
     pagination_class = PageLimitPagination
     permission_classes = [DjangoModelPermissions]
@@ -108,6 +107,7 @@ class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
     permission_classes = [AuthorStaffOrReadOnly]
     add_serializer = CropRecipeSerializer
     pagination_class = PageLimitPagination
+    ordering = ('-pub_date',)
 
     def get_queryset(self):
         """Получает queryset в соответствии с запросом.
@@ -139,7 +139,7 @@ class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
             queryset = queryset.filter(in_favorites__user=self.request.user)
         if is_favorit in Tuples.SYMBOL_FALSE_SEARCH.value:
             queryset = queryset.exclude(in_favorites__user=self.request.user)
-        return queryset
+        return queryset.order_by('-pub_date')
 
     @action(
         methods=["get", "post", "delete"],

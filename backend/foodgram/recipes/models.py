@@ -252,7 +252,7 @@ class Favorit(models.Model):
             Рецепт через ForeignKey.
         user:
             Пользователь через ForeignKey.
-        pub_date:
+        date_added:
             Дата добавления рецепта.
     """
     recipe = models.ForeignKey(
@@ -267,7 +267,7 @@ class Favorit(models.Model):
         related_name="favorites",
         on_delete=models.CASCADE,
     )
-    pub_date = models.DateTimeField(
+    date_added = models.DateTimeField(
         verbose_name="Дата добавления", auto_now_add=True, editable=False
     )
 
@@ -293,7 +293,7 @@ class Cart(models.Model):
             Рецепт через ForeignKey.
         user:
             Пользователь через ForeignKey.
-        pub_date:
+        date_added:
             Дата добавления рецепта.
     """
     recipe = models.ForeignKey(
@@ -308,7 +308,7 @@ class Cart(models.Model):
         related_name="carts",
         on_delete=models.CASCADE,
     )
-    pub_date = models.DateTimeField(
+    date_added = models.DateTimeField(
         verbose_name="Дата добавления", auto_now_add=True
     )
 

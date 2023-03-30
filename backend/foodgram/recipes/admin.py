@@ -85,7 +85,7 @@ class FavoriteAdmin(ModelAdmin):
     list_display = (
         "user",
         "recipe",
-        "pub_date",
+        "date_added",
     )
     search_fields = (
         "user__username",
@@ -98,7 +98,7 @@ class CartAdmin(ModelAdmin):
     list_display = (
         "user",
         "recipe",
-        "pub_date",
+        "date_added",
     )
     search_fields = (
         "user__username",
