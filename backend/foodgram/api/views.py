@@ -107,7 +107,7 @@ class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
     permission_classes = [AuthorStaffOrReadOnly]
     add_serializer = CropRecipeSerializer
     pagination_class = PageLimitPagination
-    ordering = ('-pub_date',)
+    ordering = ('-pub_date')
 
     def get_queryset(self):
         """Получает queryset в соответствии с запросом.
