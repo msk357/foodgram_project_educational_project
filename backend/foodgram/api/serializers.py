@@ -77,11 +77,7 @@ class UserSubscribeSerializer(UserSerializer):
         read_only_fields = ("__all__",)
 
     def get_recipes(self, obj):
-        request = self.context.get('view')
-        limit = request.GET.get('recipes_limit')
-        recipes = obj.recipes.all()
-        if limit:
-            recipes = recipes[:int(limit)]
+        recipes = obj.recipes.all()[:3]
         serializer = CropRecipeSerializer(recipes, many=True, read_only=True)
         return serializer.data
 
