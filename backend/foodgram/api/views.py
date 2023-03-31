@@ -107,12 +107,13 @@ class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
     permission_classes = [AuthorStaffOrReadOnly]
     add_serializer = CropRecipeSerializer
     pagination_class = PageLimitPagination
-    ordering = ('-pub_date')
+    ordering_fields = ('pub_date',) 
+    ordering = ('-pub_date',)
 
     def get_queryset(self):
         """Получает queryset в соответствии с запросом.
         """
-        queryset = Recipe.objects.select_related('author')
+        queryset = Recipe.objects.select_related('author').order_by('-pub_date',)
 
         tags = self.request.query_params.getlist(UrlRequests.TAGS.value)
         if tags:
@@ -123,7 +124,7 @@ class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
             queryset = queryset.filter(author=author)
 
         if self.request.user.is_anonymous:
-            return queryset
+            return queryset.order_by('-pub_date',)
 
         is_in_cart = self.request.query_params.get(UrlRequests.SHOP_CART)
         if is_in_cart in Tuples.SYMBOL_TRUE_SEARCH.value:
@@ -139,7 +140,7 @@ class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
             queryset = queryset.filter(in_favorites__user=self.request.user)
         if is_favorit in Tuples.SYMBOL_FALSE_SEARCH.value:
             queryset = queryset.exclude(in_favorites__user=self.request.user)
-        return queryset.order_by('-pub_date')
+        return queryset.order_by('-pub_date',)
 
     @action(
         methods=["get", "post", "delete"],
