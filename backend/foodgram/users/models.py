@@ -100,7 +100,7 @@ class Follow(models.Model):
         on_delete=models.CASCADE,
         related_name="subscribers",
     )
-    pub_date = models.DateTimeField(
+    date_added = models.DateTimeField(
         verbose_name='Дата создания подписки',
         auto_now_add=True,
         editable=False
