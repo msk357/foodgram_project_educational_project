@@ -106,7 +106,7 @@ class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
     permission_classes = [AuthorStaffOrReadOnly]
     add_serializer = CropRecipeSerializer
     pagination_class = PageLimitPagination
-    filter_backends = (filters.OrderingFilter)
+    filter_backends = (filters.OrderingFilter,)
     ordering_fields = ('pub_date',)
     ordering = ('-pub_date',)
 
