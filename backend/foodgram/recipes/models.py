@@ -147,7 +147,6 @@ class Recipe(models.Model):
         CustomUser,
         verbose_name="Автор рецепта",
         on_delete=models.CASCADE,
-        null=True,
         related_name="recipes",
     )
     name = models.CharField(
