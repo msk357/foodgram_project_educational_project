@@ -16,13 +16,12 @@ from core.enums import Tuples, UrlRequests
 from djoser.views import UserViewSet as DjoserUserViewSet
 from django.shortcuts import get_object_or_404
 from django.core.handlers.wsgi import WSGIRequest
-from django.db.models import F, Q, Sum, Prefetch
+from django.db.models import F, Q, Sum
 from django.http.response import HttpResponse
 from rest_framework.response import Response
 from rest_framework import filters
 from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated
 from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
@@ -107,7 +106,8 @@ class RecipeViewSet(ModelViewSet, CreateDelViewMixin):
     permission_classes = [AuthorStaffOrReadOnly]
     add_serializer = CropRecipeSerializer
     pagination_class = PageLimitPagination
-    ordering_fields = ('pub_date',) 
+    filter_backends = (filters.OrderingFilter)
+    ordering_fields = ('pub_date',)
     ordering = ('-pub_date',)
 
     def get_queryset(self):
