@@ -146,7 +146,7 @@ class Recipe(models.Model):
     author = models.ForeignKey(
         CustomUser,
         verbose_name="Автор рецепта",
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         null=True,
         related_name="recipes",
     )
