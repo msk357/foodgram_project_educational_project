@@ -42,6 +42,7 @@ class RecipeAdmin(ModelAdmin):
         "get_image",
         "count_favorites",
         "image",
+        "pub_date",
     )
     fields = (
         (

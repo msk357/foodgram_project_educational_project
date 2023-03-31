@@ -179,7 +179,6 @@ class Recipe(models.Model):
     pub_date = models.DateField(
         verbose_name='Дата публикации',
         auto_now_add=True,
-        editable=False,
     )
     tags = models.ManyToManyField(
         Tag,
