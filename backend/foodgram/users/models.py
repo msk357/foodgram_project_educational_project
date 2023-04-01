@@ -103,7 +103,7 @@ class Follow(models.Model):
     date_added = models.DateTimeField(
         verbose_name='Дата создания подписки',
         auto_now_add=True,
-        editable=False
+        editable=False,
     )
 
     class Meta:

@@ -176,7 +176,7 @@ class Recipe(models.Model):
         related_name="recipes",
         through="recipes.AmountIngredient",
     )
-    pub_date = models.DateField(
+    pub_date = models.DateTimeField(
         verbose_name='Дата публикации',
         auto_now_add=True,
     )
